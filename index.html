@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Park Market 🇵🇰 - Pakistan's Mobile Shopping Mall</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pakGreen: {
+                            50: '#eefcf4',
+                            100: '#d4f8e3',
+                            500: '#006633',
+                            600: '#005228',
+                            700: '#003d1e',
+                        },
+                        pakAccent: '#10b981'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #006633; border-radius: 4px; }
+        /* Hide scrollbar for swipeable mobile category pills */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Safe area padding for iOS/Android bottom navigation */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 12px); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col justify-between pb-20 md:pb-0">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-pakGreen-700 text-white text-[11px] sm:text-xs py-1.5 px-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="hidden sm:flex items-center gap-1.5"><i class="fa-solid fa-phone-volume"></i> Helpline: 0800-PARK-MKT (0300-1234567)</div>
+            <div class="mx-auto sm:mx-0 font-medium text-center truncate">🇵🇰 Free Delivery Across Pakistan Over Rs. 3,000! | COD Available</div>
+            <div class="hidden lg:flex items-center gap-1.5"><i class="fa-solid fa-location-dot"></i> Karachi, Lahore, Islamabad & All Cities</div>
+        </div>
+    </div>
+
+    <!-- Main Sticky App Header -->
+    <header class="sticky top-0 z-40 bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+            
+            <!-- Brand Logo (Resets to Home Root Folder) -->
+            <a href="#home" onclick="navigateToFolder('home'); return false;" class="flex items-center gap-2 group shrink-0">
+                <div class="bg-pakGreen-600 text-white p-2 sm:p-2.5 rounded-xl shadow-sm group-hover:bg-pakGreen-700 transition">
+                    <i class="fa-solid fa-store text-base sm:text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-lg sm:text-2xl font-black tracking-tight text-pakGreen-700 leading-none block">Park<span class="text-emerald-500">Market</span> <span class="text-sm sm:text-lg">🇵🇰</span></span>
+                    <span class="block text-[9px] sm:text-[10px] text-gray-500 uppercase font-bold tracking-widest mt-0.5">Pakistan's Megastore</span>
+                </div>
+            </a>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex flex-1 max-w-2xl relative">
+                <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search groceries, apparel, electronics, brands (Shan, Tapal, Haier)..." class="w-full pl-4 pr-12 py-2.5 bg-gray-100 border border-transparent rounded-full focus:outline-none focus:bg-white focus:border-pakGreen-500 text-sm transition shadow-inner">
+                <button onclick="filterProducts()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-pakGreen-600 text-white px-4 py-1.5 rounded-full hover:bg-pakGreen-700 transition text-sm">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <!-- Header Utility Buttons -->
+            <div class="flex items-center gap-1.5 sm:gap-3">
+                <button onclick="toggleWishlistModal()" class="relative p-2 sm:p-2.5 text-gray-700 hover:text-pakGreen-600 hover:bg-gray-100 rounded-full active:scale-95 transition" title="Wishlist">
+                    <i class="fa-regular fa-heart text-lg sm:text-xl"></i>
+                    <span id="wishlistBadge" class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+
+                <button onclick="toggleCartDrawer()" class="hidden md:flex relative p-2.5 text-gray-700 hover:text-pakGreen-600 hover:bg-gray-100 rounded-full transition" title="Shopping Cart">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cartBadge" class="absolute -top-0.5 -right-0.5 bg-pakGreen-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+
+                <button onclick="toggleAuthModal()" class="flex items-center gap-1.5 bg-pakGreen-600 hover:bg-pakGreen-700 active:scale-95 text-white px-3 sm:px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition shadow-sm">
+                    <i class="fa-regular fa-user"></i>
+                    <span id="authButtonText" class="max-w-[75px] sm:max-w-none truncate">Sign In</span>
+                </button>
+
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-xl active:scale-95 transition" aria-label="Open Folders Menu">
+                    <i id="mobileMenuIcon" class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Bar (Mobile App Style) -->
+        <div class="md:hidden px-3 pb-2.5">
+            <div class="relative">
+                <input type="text" id="searchInputMobile" oninput="filterProductsMobile()" placeholder="Search Shan, Tapal, Lawn, Haier AC..." class="w-full pl-4 pr-11 py-2 bg-gray-100 border border-gray-200 rounded-full text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-pakGreen-500 transition">
+                <button onclick="filterProductsMobile()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-pakGreen-600 text-white w-8 h-7 rounded-full flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Swipeable Mobile Category Pills (Quick Folder Switcher) -->
+        <div id="mobileCategoryPills" class="md:hidden bg-pakGreen-600 text-white px-3 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap shadow-inner">
+            <button data-folder="home" onclick="navigateToFolder('home')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-900 text-xs font-bold flex items-center gap-1.5 shrink-0 transition">
+                <i class="fa-solid fa-border-all"></i> All Folders
+            </button>
+            <button data-folder="Groceries & Supermarket" onclick="navigateToFolder('Groceries & Supermarket')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🛒 Groceries
+            </button>
+            <button data-folder="Fashion & Apparel" onclick="navigateToFolder('Fashion & Apparel')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                👗 Fashion & Lawn
+            </button>
+            <button data-folder="Electronics & Appliances" onclick="navigateToFolder('Electronics & Appliances')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                📱 Electronics
+            </button>
+            <button data-folder="Home & Kitchen" onclick="navigateToFolder('Home & Kitchen')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🍽️ Home & Kitchen
+            </button>
+            <button data-folder="Beauty & Personal Care" onclick="navigateToFolder('Beauty & Personal Care')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🌿 Beauty & Herbal
+            </button>
+            <button data-folder="Toys & Kids" onclick="navigateToFolder('Toys & Kids')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🧸 Kids & Toys
+            </button>
+        </div>
+
+        <!-- Navigation Bar Links (Desktop) -->
+        <nav class="bg-pakGreen-600 text-white shadow-inner hidden md:block">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-sm font-medium">
+                <div class="flex items-center space-x-1 overflow-x-auto py-2">
+                    <a href="#home" onclick="navigateToFolder('home'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition flex items-center gap-1.5 font-semibold"><i class="fa-solid fa-border-all"></i> All Products</a>
+                    <a href="#groceries-&-supermarket" onclick="navigateToFolder('Groceries & Supermarket'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition">Groceries</a>
+                    <a href="#fashion-&-apparel" onclick="navigateToFolder('Fashion & Apparel'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition">Fashion & Lawn</a>
+                    <a href="#electronics-&-appliances" onclick="navigateToFolder('Electronics & Appliances'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition">Electronics</a>
+                    <a href="#home-&-kitchen" onclick="navigateToFolder('Home & Kitchen'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition">Home & Kitchen</a>
+                    <a href="#beauty-&-personal-care" onclick="navigateToFolder('Beauty & Personal Care'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition">Beauty & Herbal</a>
+                    <a href="#toys-&-kids" onclick="navigateToFolder('Toys & Kids'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-pakGreen-700 transition">Kids & Toys</a>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="#deals" class="bg-amber-400 text-gray-900 px-3 py-1 rounded-md font-bold text-xs uppercase animate-pulse">🔥 Flash Deals</a>
+                    <button onclick="openOrderTracker()" class="hover:bg-pakGreen-700 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-truck-fast mr-1"></i> Track Order</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Folders Drawer Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t px-3 py-3 space-y-1 shadow-2xl max-h-[75vh] overflow-y-auto">
+            <div class="flex items-center justify-between px-3 pb-1.5 border-b">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-pakGreen-700">📁 Select Department Folder</span>
+                <button onclick="toggleMobileMenu()" class="text-xs text-gray-400 hover:text-gray-600 font-bold">Close ✕</button>
+            </div>
+            <a href="#home" onclick="navigateToFolder('home'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl font-semibold text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-border-all text-pakGreen-600 w-5"></i> All Products (Root Folder)</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#groceries-&-supermarket" onclick="navigateToFolder('Groceries & Supermarket'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-basket-shopping text-pakGreen-600 w-5"></i> Groceries & Supermarket</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#fashion-&-apparel" onclick="navigateToFolder('Fashion & Apparel'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-shirt text-pakGreen-600 w-5"></i> Fashion & Apparel</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#electronics-&-appliances" onclick="navigateToFolder('Electronics & Appliances'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-mobile-screen text-pakGreen-600 w-5"></i> Electronics & Appliances</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#home-&-kitchen" onclick="navigateToFolder('Home & Kitchen'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-utensils text-pakGreen-600 w-5"></i> Home & Kitchen</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#beauty-&-personal-care" onclick="navigateToFolder('Beauty & Personal Care'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-sparkles text-pakGreen-600 w-5"></i> Beauty & Personal Care</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#toys-&-kids" onclick="navigateToFolder('Toys & Kids'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-pakGreen-50 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-gamepad text-pakGreen-600 w-5"></i> Toys & Kids</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <div class="border-t pt-2.5 mt-2 grid grid-cols-2 gap-2">
+                <button onclick="openOrderTracker(); toggleMobileMenu();" class="bg-gray-100 text-pakGreen-700 font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-truck-fast"></i> Track Order
+                </button>
+                <button onclick="openWhatsAppDirect(); toggleMobileMenu();" class="bg-emerald-500 text-white py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp Order
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Folder Breadcrumb & Back History Bar -->
+    <div class="bg-gray-100/95 backdrop-blur-sm border-b py-2 px-3 sm:px-6 sticky top-[128px] md:top-[104px] z-30">
+        <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-gray-600 gap-2">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+                <button onclick="handleBrowserBack()" class="bg-white hover:bg-gray-200 active:scale-95 border border-gray-300 px-3 py-1.5 rounded-xl shadow-sm font-bold flex items-center gap-1.5 text-gray-800 transition shrink-0">
+                    <i class="fa-solid fa-arrow-left text-pakGreen-600"></i> Back
+                </button>
+                <span class="text-gray-400">/</span>
+                <div id="breadcrumbTrail" class="flex items-center gap-1.5 font-bold text-pakGreen-700 text-[11px] sm:text-xs">
+                    <span class="cursor-pointer hover:underline" onclick="navigateToFolder('home')">Home</span>
+                </div>
+            </div>
+            <div class="hidden sm:block text-gray-500 font-mono text-[11px] shrink-0">
+                Folder: <span id="folderPathText">/park-market/home</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Banner Section -->
+    <section id="heroSection" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-6">
+        <div class="bg-gradient-to-r from-pakGreen-700 via-pakGreen-600 to-emerald-800 rounded-2xl sm:rounded-3xl text-white p-5 sm:p-10 lg:p-12 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+            <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="z-10 max-w-xl space-y-3 sm:space-y-4 text-center md:text-left">
+                <div class="inline-flex items-center gap-1.5 bg-amber-400 text-gray-900 px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
+                    <i class="fa-solid fa-star"></i> Pakistan's Mega Shopping Festival
+                </div>
+                <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                    Every Pakistani Brand & Essential in One App!
+                </h1>
+                <p class="text-emerald-100 text-xs sm:text-base leading-relaxed">
+                    Shop authentic Shan masalay, Tapal tea, Haier appliances, unstitched lawn suits, and daily groceries with Cash on Delivery & direct WhatsApp ordering.
+                </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3 pt-1">
+                    <a href="#catalog" class="bg-amber-400 hover:bg-amber-300 active:scale-95 text-gray-900 font-bold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl shadow-lg transition flex items-center gap-2 text-xs sm:text-sm">
+                        <span>Shop Now</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <button onclick="openWhatsAppDirect()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl shadow-lg transition flex items-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-brands fa-whatsapp text-base"></i> <span>Order on WhatsApp</span>
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 sm:gap-5 pt-2 text-[11px] sm:text-xs text-emerald-200">
+                    <span><i class="fa-solid fa-circle-check text-amber-400 mr-1"></i> 100% Genuine</span>
+                    <span><i class="fa-solid fa-truck text-amber-400 mr-1"></i> 2-4 Days Delivery</span>
+                    <span><i class="fa-solid fa-money-bill-wave text-amber-400 mr-1"></i> COD / EasyPaisa / JazzCash</span>
+                </div>
+            </div>
+
+            <!-- Interactive Department Folder Shortcut Cards -->
+            <div class="z-10 grid grid-cols-2 gap-2.5 sm:gap-4 w-full md:w-auto">
+                <div onclick="navigateToFolder('Groceries & Supermarket')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-basket-shopping text-2xl sm:text-3xl text-amber-400 mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Supermarket</h3>
+                    <p class="text-[10px] sm:text-xs text-emerald-200">Up to 40% OFF Ghee & Dal</p>
+                </div>
+                <div onclick="navigateToFolder('Fashion & Apparel')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-shirt text-2xl sm:text-3xl text-amber-400 mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Lawn & Fashion</h3>
+                    <p class="text-[10px] sm:text-xs text-emerald-200">Designer Khaddar & Kurtis</p>
+                </div>
+                <div onclick="navigateToFolder('Electronics & Appliances')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-mobile-screen text-2xl sm:text-3xl text-amber-400 mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Electronics</h3>
+                    <p class="text-[10px] sm:text-xs text-emerald-200">Infinix, Haier & Dawlance</p>
+                </div>
+                <div onclick="navigateToFolder('Home & Kitchen')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-utensils text-2xl sm:text-3xl text-amber-400 mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Home & Kitchen</h3>
+                    <p class="text-[10px] sm:text-xs text-emerald-200">Dinner Sets & Bed Sheets</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content & Folder Views -->
+    <main id="catalog" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 my-6 sm:my-10 flex-1 w-full">
+        
+        <!-- 1. Category / Root Catalog Folder View -->
+        <div id="catalogViewWrapper">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-8 pb-3 sm:pb-4 border-b gap-3 sm:gap-4">
+                <div>
+                    <span class="text-pakGreen-600 font-bold text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-folder-open"></i> Department Folder View
+                    </span>
+                    <h2 id="catalogFolderTitle" class="text-xl sm:text-3xl font-extrabold text-gray-900 mt-0.5">All Products Catalog</h2>
+                </div>
+                
+                <!-- Filters & Sorting Controls -->
+                <div class="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                    <select id="categoryFilter" onchange="navigateToFolder(this.value)" class="w-full sm:w-auto bg-white border border-gray-300 text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-pakGreen-600 shadow-sm font-medium">
+                        <option value="home">All Folders</option>
+                        <option value="Groceries & Supermarket">Groceries</option>
+                        <option value="Fashion & Apparel">Fashion & Lawn</option>
+                        <option value="Electronics & Appliances">Electronics</option>
+                        <option value="Home & Kitchen">Home & Kitchen</option>
+                        <option value="Beauty & Personal Care">Beauty & Herbal</option>
+                        <option value="Toys & Kids">Toys & Kids</option>
+                    </select>
+
+                    <select id="sortBy" onchange="sortProducts()" class="w-full sm:w-auto bg-white border border-gray-300 text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-pakGreen-600 shadow-sm font-medium">
+                        <option value="featured">Sort: Featured</option>
+                        <option value="low-high">Price: Low to High</option>
+                        <option value="high-low">Price: High to Low</option>
+                        <option value="rating">Top Rated</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 2-Column Mobile / 4-Column Desktop Product Grid -->
+            <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+                <!-- Products injected dynamically -->
+            </div>
+
+            <!-- Empty Search State -->
+            <div id="emptyState" class="hidden text-center py-12 sm:py-16 bg-white rounded-2xl shadow-sm border mt-4 px-4">
+                <i class="fa-solid fa-box-open text-4xl sm:text-5xl text-gray-300 mb-3"></i>
+                <h3 class="text-base sm:text-lg font-bold text-gray-700">No products found in this folder</h3>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">Try searching for another brand or return to the root folder.</p>
+                <button onclick="resetFilters()" class="mt-4 bg-pakGreen-600 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold hover:bg-pakGreen-700 transition">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- 2. Dedicated Individual Product Sub-Folder View -->
+        <div id="productFolderView" class="hidden space-y-6 sm:space-y-10">
+            <!-- Folder Path Header -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b">
+                <button onclick="handleBrowserBack()" class="bg-white hover:bg-gray-100 active:scale-95 border border-gray-300 text-gray-800 px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm flex items-center gap-2 transition">
+                    <i class="fa-solid fa-arrow-left text-pakGreen-600"></i> Back to Folder
+                </button>
+                <div class="text-[10px] sm:text-xs font-mono bg-emerald-50 text-pakGreen-700 px-3 py-1.5 rounded-lg border border-emerald-200 truncate max-w-[220px] sm:max-w-none" id="productFolderSlugBadge">
+                    /park-market/product
+                </div>
+            </div>
+
+            <!-- Main Product Folder Details Card -->
+            <div id="productDetailContent" class="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 overflow-hidden grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-8 p-4 sm:p-8 lg:p-10">
+                <!-- Injected dynamically via openProductFolder(id) -->
+            </div>
+
+            <!-- Related Products Inside Same Category Folder -->
+            <div class="pt-2 sm:pt-4">
+                <div class="flex items-center justify-between mb-4 sm:mb-6">
+                    <div>
+                        <span class="text-pakGreen-600 font-bold text-[10px] sm:text-xs uppercase tracking-wider">Same Department Folder</span>
+                        <h3 class="text-lg sm:text-2xl font-extrabold text-gray-900">More Items in This Folder</h3>
+                    </div>
+                    <button id="viewAllCategoryBtn" class="text-xs sm:text-sm font-bold text-pakGreen-600 hover:underline">Open Folder &rarr;</button>
+                </div>
+                <div id="relatedProductsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Flash Deals & Voucher Promo Banner -->
+    <section id="deals" class="bg-gradient-to-r from-amber-500 to-orange-500 py-8 sm:py-12 text-white my-8 sm:my-12 shadow-inner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+            <div class="space-y-3 text-center md:text-left">
+                <span class="bg-white/20 px-3 py-1 rounded-full text-[11px] font-bold uppercase">Limited Time Offer</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold">Pakistani Weekend Super Bazaar Sale</h2>
+                <p class="text-amber-100 text-xs sm:text-sm max-w-lg">Get extra 15% OFF when paying via JazzCash, EasyPaisa, or COD on all grocery and fashion orders.</p>
+                <div class="flex items-center justify-center md:justify-start gap-3 pt-1 font-mono text-lg sm:text-xl font-bold">
+                    <div class="bg-black/30 px-3 py-2 rounded-xl">02 <span class="text-[10px] block font-sans font-normal">Days</span></div>
+                    <div>:</div>
+                    <div class="bg-black/30 px-3 py-2 rounded-xl">14 <span class="text-[10px] block font-sans font-normal">Hours</span></div>
+                    <div>:</div>
+                    <div class="bg-black/30 px-3 py-2 rounded-xl">45 <span class="text-[10px] block font-sans font-normal">Mins</span></div>
+                </div>
+            </div>
+            <div class="bg-white text-gray-900 p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl max-w-sm w-full text-center space-y-3">
+                <h3 class="text-lg sm:text-xl font-bold text-pakGreen-700">Apply Voucher Code</h3>
+                <div class="bg-gray-100 p-3 rounded-xl border border-dashed border-pakGreen-600 font-mono text-lg font-black tracking-wider text-pakGreen-600">
+                    PARK15
+                </div>
+                <p class="text-xs text-gray-500">Tap below to apply 15% discount to your shopping cart.</p>
+                <button onclick="applyVoucher('PARK15')" class="w-full bg-pakGreen-600 hover:bg-pakGreen-700 active:scale-95 text-white font-bold py-3 rounded-xl transition text-sm">
+                    Apply 15% Voucher
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 pt-12 sm:pt-16 pb-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="bg-pakGreen-600 text-white p-2 rounded-xl">
+                        <i class="fa-solid fa-store text-lg"></i>
+                    </div>
+                    <span class="text-xl font-black text-white">Park<span class="text-emerald-400">Market</span> 🇵🇰</span>
+                </div>
+                <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">
+                    Pakistan's premier mobile shopping mall. Authentic groceries, lawn fashion, electronics & home essentials delivered nationwide with Cash on Delivery.
+                </p>
+                <div class="flex items-center space-x-4 text-xl text-emerald-400 pt-1">
+                    <i class="fa-brands fa-facebook hover:text-white cursor-pointer transition"></i>
+                    <i class="fa-brands fa-instagram hover:text-white cursor-pointer transition"></i>
+                    <i onclick="openWhatsAppDirect()" class="fa-brands fa-whatsapp hover:text-white cursor-pointer transition"></i>
+                    <i class="fa-brands fa-youtube hover:text-white cursor-pointer transition"></i>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3 border-b border-gray-800 pb-2">Department Folders</h4>
+                <ul class="space-y-2 text-xs sm:text-sm text-gray-400">
+                    <li><a href="#groceries-&-supermarket" onclick="navigateToFolder('Groceries & Supermarket'); return false;" class="hover:text-emerald-400 transition">Groceries & Supermarket</a></li>
+                    <li><a href="#fashion-&-apparel" onclick="navigateToFolder('Fashion & Apparel'); return false;" class="hover:text-emerald-400 transition">Fashion & Lawn Suits</a></li>
+                    <li><a href="#electronics-&-appliances" onclick="navigateToFolder('Electronics & Appliances'); return false;" class="hover:text-emerald-400 transition">Electronics & ACs</a></li>
+                    <li><a href="#home-&-kitchen" onclick="navigateToFolder('Home & Kitchen'); return false;" class="hover:text-emerald-400 transition">Home & Kitchenware</a></li>
+                    <li><a href="#beauty-&-personal-care" onclick="navigateToFolder('Beauty & Personal Care'); return false;" class="hover:text-emerald-400 transition">Beauty & Cosmetics</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3 border-b border-gray-800 pb-2">Customer Care</h4>
+                <ul class="space-y-2 text-xs sm:text-sm text-gray-400">
+                    <li><a href="#" onclick="openOrderTracker(); return false;" class="hover:text-emerald-400 transition">Track Your Order</a></li>
+                    <li><a href="#" onclick="openWhatsAppDirect(); return false;" class="hover:text-emerald-400 transition">WhatsApp Support (0300-1234567)</a></li>
+                    <li><a href="#" onclick="showMessageBox('Return Policy', 'Easy 7-day return and exchange policy across Pakistan for all unused items.'); return false;" class="hover:text-emerald-400 transition">7-Day Returns & Exchanges</a></li>
+                    <li><a href="#" onclick="showMessageBox('Shipping Info', 'Fast delivery across Karachi, Lahore, Islamabad, Faisalabad, Peshawar, Quetta and all towns.'); return false;" class="hover:text-emerald-400 transition">Nationwide Shipping Info</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3 border-b border-gray-800 pb-2">Payment Partners</h4>
+                <p class="text-xs text-gray-400 mb-3">Trusted Pakistani payment options:</p>
+                <div class="grid grid-cols-3 gap-2 text-center text-[11px] font-bold text-gray-700">
+                    <div class="bg-white p-2 rounded-lg shadow-sm">COD</div>
+                    <div class="bg-red-100 text-red-700 p-2 rounded-lg shadow-sm">EasyPaisa</div>
+                    <div class="bg-amber-100 text-amber-800 p-2 rounded-lg shadow-sm">JazzCash</div>
+                    <div class="bg-blue-100 text-blue-800 p-2 rounded-lg shadow-sm">Visa</div>
+                    <div class="bg-purple-100 text-purple-800 p-2 rounded-lg shadow-sm">MasterCard</div>
+                    <div class="bg-emerald-100 text-emerald-800 p-2 rounded-lg shadow-sm">1Link</div>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-gray-800 text-center text-xs text-gray-500">
+            &copy; 2026 Park Market 🇵🇰. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Bottom Sheet / Slide-Over Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer()"></div>
+        <div class="absolute inset-x-0 bottom-0 sm:inset-y-0 sm:left-auto sm:right-0 max-w-full flex sm:pl-10">
+            <div class="w-full sm:w-screen sm:max-w-md max-h-[88vh] sm:max-h-full bg-white rounded-t-3xl sm:rounded-none shadow-2xl flex flex-col justify-between overflow-hidden">
+                <!-- Mobile Sheet Drag Handle -->
+                <div class="sm:hidden bg-pakGreen-700 pt-2 flex justify-center">
+                    <div class="w-10 h-1 bg-white/40 rounded-full"></div>
+                </div>
+                <!-- Drawer Header -->
+                <div class="p-4 border-b flex items-center justify-between bg-pakGreen-700 text-white">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center gap-2"><i class="fa-solid fa-cart-shopping"></i> My Cart (<span id="cartItemCount">0</span>)</h3>
+                    <button onclick="toggleCartDrawer()" class="text-white hover:text-gray-200 p-1.5 rounded-lg"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <!-- Cart Items List -->
+                <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-4 space-y-3 divide-y">
+                    <!-- Dynamic cart items -->
+                </div>
+                <!-- Cart Footer & Checkout -->
+                <div class="border-t p-4 pb-safe bg-gray-50 space-y-3">
+                    <div class="space-y-1 text-xs sm:text-sm">
+                        <div class="flex justify-between text-gray-600">
+                            <span>Subtotal</span>
+                            <span id="cartSubtotal">Rs. 0</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>Delivery Charges</span>
+                            <span id="cartDelivery">Rs. 200</span>
+                        </div>
+                        <div id="discountRow" class="flex justify-between text-emerald-600 font-semibold hidden">
+                            <span>Voucher Discount (PARK15)</span>
+                            <span id="cartDiscount">-Rs. 0</span>
+                        </div>
+                        <div class="flex justify-between text-base font-black text-gray-900 border-t pt-2">
+                            <span>Total Payable</span>
+                            <span id="cartTotal" class="text-pakGreen-700">Rs. 0</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="proceedToCheckout()" class="w-full bg-pakGreen-600 hover:bg-pakGreen-700 active:scale-95 text-white font-bold py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-lock"></i> Place Cash on Delivery Order
+                        </button>
+                        <button onclick="orderCartOnWhatsApp()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold py-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> Send Cart Order on WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Bottom Sheet Modal -->
+    <div id="wishlistModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-end sm:items-center justify-center min-h-screen sm:px-4 pt-4 sm:pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="toggleWishlistModal()"></div>
+            <div class="relative z-10 w-full max-w-2xl p-5 sm:p-6 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-t-3xl sm:rounded-3xl pb-safe">
+                <div class="flex items-center justify-between pb-3 border-b mb-3">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fa-solid fa-heart text-red-500"></i> My Wishlist (<span id="wishlistCountHeader">0</span>)</h3>
+                    <button onclick="toggleWishlistModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div id="wishlistContainer" class="space-y-3 max-h-80 sm:max-h-96 overflow-y-auto divide-y">
+                    <!-- Dynamic Wishlist Items -->
+                </div>
+                <div class="mt-4 pt-3 border-t flex justify-end">
+                    <button onclick="toggleWishlistModal()" class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2.5 rounded-xl text-sm font-bold">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login / Signup Bottom Sheet Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-end sm:items-center justify-center min-h-screen sm:px-4 pt-4 sm:pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="toggleAuthModal()"></div>
+            <div class="relative z-10 w-full max-w-md p-5 sm:p-6 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-t-3xl sm:rounded-3xl pb-safe">
+                <div class="flex items-center justify-between pb-3 border-b mb-4">
+                    <h3 id="authModalTitle" class="text-lg sm:text-xl font-bold text-pakGreen-700">Sign In to Park Market</h3>
+                    <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+                    <div id="nameFieldContainer" class="hidden">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name</label>
+                        <input type="text" id="authName" placeholder="e.g. Muhammad Ali" class="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:border-pakGreen-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Mobile Number or Email</label>
+                        <input type="text" id="authEmailPhone" required placeholder="03001234567 or user@gmail.com" class="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:border-pakGreen-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Password</label>
+                        <input type="password" id="authPassword" required placeholder="••••••••" class="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:border-pakGreen-600">
+                    </div>
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-pakGreen-600 hover:bg-pakGreen-700 text-white font-bold py-3.5 rounded-xl transition shadow-md">
+                        Sign In
+                    </button>
+                    <div class="text-center pt-1">
+                        <p id="authToggleText" class="text-xs text-gray-600">
+                            Don't have an account? <span onclick="switchAuthMode()" class="text-pakGreen-600 font-bold cursor-pointer hover:underline">Register Now</span>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Tracking Bottom Sheet Modal -->
+    <div id="orderTrackerModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-end sm:items-center justify-center min-h-screen sm:px-4 pt-4 sm:pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="openOrderTracker()"></div>
+            <div class="relative z-10 w-full max-w-lg p-5 sm:p-6 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-t-3xl sm:rounded-3xl pb-safe">
+                <div class="flex items-center justify-between pb-3 border-b mb-4">
+                    <h3 class="text-lg sm:text-xl font-bold text-pakGreen-700"><i class="fa-solid fa-truck-fast mr-2"></i> Track Your Order</h3>
+                    <button onclick="openOrderTracker()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Enter Order ID</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="orderIdInput" placeholder="e.g. PM-94821" class="flex-1 px-4 py-3 bg-gray-50 border rounded-xl text-sm focus:outline-none focus:border-pakGreen-600">
+                            <button onclick="trackOrder()" class="bg-pakGreen-600 hover:bg-pakGreen-700 text-white px-5 py-3 rounded-xl font-bold text-sm">Track</button>
+                        </div>
+                    </div>
+                    <div id="orderTrackingResult" class="hidden bg-gray-50 p-4 rounded-2xl border space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold text-gray-500 uppercase">
+                            <span>Order #<span id="resOrderId">PM-1049</span></span>
+                            <span id="resStatus" class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">Out for Delivery</span>
+                        </div>
+                        <div class="space-y-1 text-sm">
+                            <p class="font-bold text-gray-800" id="resItemSummary">Shan Biryani Masala + Tapal Danedar Tea</p>
+                            <p class="text-xs text-gray-500">Destination: <span id="resCity" class="font-medium text-gray-700">Karachi, Pakistan</span></p>
+                        </div>
+                        <div class="relative pt-3">
+                            <div class="overflow-hidden h-2 mb-3 text-xs flex rounded bg-gray-200">
+                                <div id="resProgressBar" style="width: 75%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pakGreen-600 transition-all duration-500"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-gray-500 font-medium">
+                                <span>Order Placed</span>
+                                <span>Packed</span>
+                                <span class="text-pakGreen-700 font-bold">Out for Delivery</span>
+                                <span>Delivered</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Message Box Modal -->
+    <div id="messageBoxModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="closeMessageBox()"></div>
+            <div class="relative z-10 inline-block w-full max-w-sm p-6 my-8 overflow-hidden text-center align-middle transition-all transform bg-white shadow-2xl rounded-3xl space-y-4">
+                <div id="msgBoxIcon" class="w-14 h-14 bg-emerald-100 text-pakGreen-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 id="msgBoxTitle" class="text-lg font-bold text-gray-900">Notification</h3>
+                <p id="msgBoxBody" class="text-sm text-gray-600">Message content goes here.</p>
+                <button onclick="closeMessageBox()" class="w-full bg-pakGreen-600 hover:bg-pakGreen-700 text-white font-bold py-3 rounded-xl transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp & Live Chat Support Stack -->
+    <div class="fixed bottom-20 md:bottom-5 right-3 sm:right-5 z-40 flex flex-col items-end gap-2.5 sm:gap-3">
+        
+        <!-- WhatsApp Floating Action Button (Desktop; Mobile has dedicated Bottom Nav tab) -->
+        <div class="hidden md:flex group relative items-center">
+            <span class="absolute right-16 bg-gray-900 text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                Chat on WhatsApp 💬
+            </span>
+            <button onclick="openWhatsAppDirect()" class="bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl transition transform hover:scale-110">
+                <i class="fa-brands fa-whatsapp"></i>
+            </button>
+        </div>
+
+        <!-- Live Chat Support Panel -->
+        <div id="chatBoxPanel" class="hidden fixed inset-x-3 bottom-20 sm:static bg-white shadow-2xl rounded-3xl sm:w-96 border overflow-hidden flex flex-col z-50">
+            <div class="bg-pakGreen-700 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
+                    <div>
+                        <h4 class="font-bold text-sm">Park Market Support 🇵🇰</h4>
+                        <span class="text-[10px] text-emerald-200">Online | Usually replies instantly</span>
+                    </div>
+                </div>
+                <button onclick="toggleChatPanel()" class="text-white hover:text-gray-200 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="chatMessages" class="p-4 h-56 sm:h-64 overflow-y-auto space-y-3 text-xs bg-gray-50 flex flex-col">
+                <div class="bg-pakGreen-50 text-gray-800 p-3 rounded-2xl rounded-tl-none max-w-[85%] self-start shadow-sm">
+                    Assalam-o-Alaikum! Welcome to Park Market. How can we help you today?
+                </div>
+            </div>
+            <div class="p-3 border-t bg-white flex gap-2">
+                <input type="text" id="chatInput" onkeypress="if(event.key==='Enter') sendChatMessage()" placeholder="Type your message..." class="flex-1 px-3 py-2.5 bg-gray-100 rounded-xl text-xs focus:outline-none focus:border-pakGreen-600 border">
+                <button onclick="sendChatMessage()" class="bg-pakGreen-600 hover:bg-pakGreen-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold">Send</button>
+            </div>
+        </div>
+
+        <!-- Live Chat Toggle Button -->
+        <button onclick="toggleChatPanel()" class="bg-pakGreen-600 hover:bg-pakGreen-700 active:scale-95 text-white w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-2xl flex items-center justify-center text-lg sm:text-xl transition transform hover:scale-105" title="Live Chat Support">
+            <i class="fa-solid fa-headset"></i>
+        </button>
+    </div>
+
+    <!-- Native Mobile App Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe">
+        <div class="grid grid-cols-5 h-16 items-center text-[10px] font-semibold text-gray-500">
+            <button onclick="navigateToFolder('home')" id="navHomeBtn" class="flex flex-col items-center justify-center gap-1 py-1 text-pakGreen-700 active:scale-95 transition">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="toggleMobileMenu()" id="navFoldersBtn" class="flex flex-col items-center justify-center gap-1 py-1 hover:text-pakGreen-600 active:scale-95 transition">
+                <i class="fa-solid fa-folder-tree text-lg"></i>
+                <span>Folders</span>
+            </button>
+            <button onclick="toggleCartDrawer()" class="relative flex flex-col items-center justify-center gap-1 py-1 hover:text-pakGreen-600 active:scale-95 transition">
+                <div class="relative">
+                    <i class="fa-solid fa-cart-shopping text-lg text-pakGreen-600"></i>
+                    <span id="mobileCartBadge" class="absolute -top-1.5 -right-2.5 bg-pakGreen-600 text-white text-[9px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border border-white">0</span>
+                </div>
+                <span class="font-bold text-gray-800">Cart</span>
+            </button>
+            <button onclick="openOrderTracker()" class="flex flex-col items-center justify-center gap-1 py-1 hover:text-pakGreen-600 active:scale-95 transition">
+                <i class="fa-solid fa-truck-fast text-lg"></i>
+                <span>Track</span>
+            </button>
+            <button onclick="openWhatsAppDirect()" class="flex flex-col items-center justify-center gap-1 py-1 text-emerald-600 active:scale-95 transition">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+                <span class="font-bold">WhatsApp</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Application Logic: Sub-Folder Routing, History API, Cart & WhatsApp Integration -->
+    <script>
+        const WHATSAPP_NUMBER = "923001234567";
+
+        // Complete Pakistani Product Catalog across 6 Departments
+        const products = [
+            {
+                id: 1,
+                title: "Shan Bombay Biryani Masala 50g",
+                category: "Groceries & Supermarket",
+                price: 130,
+                oldPrice: 150,
+                rating: 4.9,
+                reviews: 1420,
+                image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=80",
+                badge: "Bestseller",
+                brand: "Shan",
+                description: "Authentic Pakistani Bombay Biryani spice mix by Shan Foods. Crafted with traditional aromatic spices for restaurant-style biryani at home."
+            },
+            {
+                id: 2,
+                title: "Tapal Danedar Tea Box 900g",
+                category: "Groceries & Supermarket",
+                price: 1150,
+                oldPrice: 1250,
+                rating: 4.8,
+                reviews: 2300,
+                image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=500&q=80",
+                badge: "Essential",
+                brand: "Tapal",
+                description: "Pakistan's favorite strong, rich, and aromatic Danedar black tea leaves in a family economy pack."
+            },
+            {
+                id: 3,
+                title: "Dalda Banaspati Ghee 5kg Tin",
+                category: "Groceries & Supermarket",
+                price: 2850,
+                oldPrice: 3100,
+                rating: 4.7,
+                reviews: 980,
+                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=500&q=80",
+                badge: "Discount",
+                brand: "Dalda",
+                description: "Enriched with Vitamins A & D, Dalda Banaspati brings traditional taste and nutrition to every Pakistani kitchen."
+            },
+            {
+                id: 4,
+                title: "Super Kernel Basmati Rice 5kg",
+                category: "Groceries & Supermarket",
+                price: 1950,
+                oldPrice: 2200,
+                rating: 4.9,
+                reviews: 850,
+                image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=500&q=80",
+                badge: "Top Grade",
+                brand: "Fauji",
+                description: "Extra-long aged Punjab Super Kernel Basmati rice with irresistible aroma and non-sticky fluffy grains."
+            },
+            {
+                id: 5,
+                title: "Designer Unstitched 3-Piece Lawn Suit",
+                category: "Fashion & Apparel",
+                price: 3499,
+                oldPrice: 4500,
+                rating: 4.8,
+                reviews: 640,
+                image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=500&q=80",
+                badge: "New Arrival",
+                brand: "Gul Ahmed",
+                description: "Premium digital printed lawn shirt with embroidered neckline, chiffon dupatta, and dyed cambric trouser."
+            },
+            {
+                id: 6,
+                title: "Men's Premium Cotton Shalwar Kameez",
+                category: "Fashion & Apparel",
+                price: 2650,
+                oldPrice: 3200,
+                rating: 4.6,
+                reviews: 410,
+                image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=500&q=80",
+                badge: "Hot",
+                brand: "Alkaram",
+                description: "Breathable Egyptian cotton stitched shalwar kameez tailored for comfort in all seasons."
+            },
+            {
+                id: 7,
+                title: "Traditional Men's Peshawari Chappal",
+                category: "Fashion & Apparel",
+                price: 2199,
+                oldPrice: 2800,
+                rating: 4.9,
+                reviews: 1120,
+                image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=500&q=80",
+                badge: "Handcrafted",
+                brand: "Charsadda",
+                description: "100% pure cowhide leather handcrafted Charsadda Peshawari chappal with durable tyre sole."
+            },
+            {
+                id: 8,
+                title: "Infinix Hot 40i (8GB/128GB)",
+                category: "Electronics & Appliances",
+                price: 31999,
+                oldPrice: 35999,
+                rating: 4.7,
+                reviews: 530,
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=80",
+                badge: "PTA Approved",
+                brand: "Infinix",
+                description: "Official PTA-approved smartphone with 90Hz punch-hole display, 50MP main camera, and 5000mAh fast-charging battery."
+            },
+            {
+                id: 9,
+                title: "Haier 1.5 Ton Inverter AC",
+                category: "Electronics & Appliances",
+                price: 135000,
+                oldPrice: 148000,
+                rating: 4.9,
+                reviews: 320,
+                image: "https://images.unsplash.com/photo-1615873968403-89e06c629265?auto=format&fit=crop&w=500&q=80",
+                badge: "Free Install",
+                brand: "Haier",
+                description: "DC Inverter split air conditioner with UPS compatibility, triple inverter plus energy saving, and 10-year compressor warranty."
+            },
+            {
+                id: 10,
+                title: "Dawlance Microwave Oven 30L",
+                category: "Electronics & Appliances",
+                price: 28500,
+                oldPrice: 32000,
+                rating: 4.8,
+                reviews: 440,
+                image: "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?auto=format&fit=crop&w=500&q=80",
+                badge: "Sale",
+                brand: "Dawlance",
+                description: "30-liter digital microwave oven with built-in Pakistani recipes menu and child safety lock."
+            },
+            {
+                id: 11,
+                title: "Royal Deluxe Dinner Set 72-Pcs",
+                category: "Home & Kitchen",
+                price: 14500,
+                oldPrice: 18000,
+                rating: 4.7,
+                reviews: 290,
+                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=500&q=80",
+                badge: "Ceramic",
+                brand: "Royal",
+                description: "Scratch-resistant fine bone china 72-piece family dinner set with golden rim detailing."
+            },
+            {
+                id: 12,
+                title: "Traditional Ajrak Printed Bed Sheet Set",
+                category: "Home & Kitchen",
+                price: 1899,
+                oldPrice: 2400,
+                rating: 4.9,
+                reviews: 670,
+                image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=500&q=80",
+                badge: "Cultural",
+                brand: "SindhCraft",
+                description: "King-size 100% pure cotton bedsheet with 2 matching pillow covers featuring authentic Sindhi Ajrak block print."
+            },
+            {
+                id: 13,
+                title: "Saeed Ghani Herbal Ubtan Face Wash",
+                category: "Beauty & Personal Care",
+                price: 450,
+                oldPrice: 550,
+                rating: 4.8,
+                reviews: 1890,
+                image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=500&q=80",
+                badge: "Organic",
+                brand: "Saeed Ghani",
+                description: "Natural turmeric, sandalwood, and rosewater herbal cleanser for glowing, refreshed skin."
+            },
+            {
+                id: 14,
+                title: "Hemani 100% Pure Coconut & Almond Hair Oil",
+                category: "Beauty & Personal Care",
+                price: 680,
+                oldPrice: 800,
+                rating: 4.7,
+                reviews: 920,
+                image: "https://images.unsplash.com/photo-1608248597359-974cb3582498?auto=format&fit=crop&w=500&q=80",
+                badge: "Herbal",
+                brand: "Hemani",
+                description: "Cold-pressed natural coconut and sweet almond oil blend for deep root nourishment and shine."
+            },
+            {
+                id: 15,
+                title: "Remote Control 4x4 Jeep Toy for Kids",
+                category: "Toys & Kids",
+                price: 2499,
+                oldPrice: 3000,
+                rating: 4.6,
+                reviews: 310,
+                image: "https://images.unsplash.com/photo-1594787318286-3d835c1d207f?auto=format&fit=crop&w=500&q=80",
+                badge: "Kids Choice",
+                brand: "ToyLand",
+                description: "Rechargeable high-speed off-road RC jeep with LED headlights and shock-absorbing tires."
+            },
+            {
+                id: 16,
+                title: "School Bag Waterproof Backpack",
+                category: "Toys & Kids",
+                price: 1599,
+                oldPrice: 1999,
+                rating: 4.8,
+                reviews: 510,
+                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80",
+                badge: "Back to School",
+                brand: "Stellar",
+                description: "Lightweight ergonomic waterproof school backpack with padded laptop/tablet compartment and bottle pockets."
+            }
+        ];
+
+        // Application State
+        let cart = [];
+        let wishlist = [];
+        let currentFolder = "home";
+        let currentProductId = null;
+        let detailQty = 1;
+        let isAuthRegistered = false;
+        let appliedDiscount = 0;
+
+        // Slug Helper for Clean Sub-Folder URLs
+        function toSlug(text) {
+            return text.toLowerCase().replace(/[^a-z0-9&]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+
+        // Initialize App & Listen for Hardware/Browser Back Button
+        window.onload = function() {
+            syncFromHash(false);
+            updateBadges();
+        };
+
+        window.addEventListener('popstate', function() {
+            syncFromHash(false);
+        });
+
+        // Parse URL Hash to Open Exact Category Folder or Product Sub-Folder
+        function syncFromHash(pushHistory = false) {
+            const rawHash = window.location.hash.replace(/^#/, '');
+            if (!rawHash || rawHash === 'home' || rawHash === 'catalog' || rawHash === 'deals') {
+                renderCategoryFolder('home', pushHistory);
+                return;
+            }
+
+            // Check if hash matches #category-slug/id-product-slug
+            if (rawHash.includes('/')) {
+                const parts = rawHash.split('/');
+                const productPart = parts[1];
+                const productId = parseInt(productPart.split('-')[0], 10);
+                const foundProduct = products.find(p => p.id === productId);
+                if (foundProduct) {
+                    renderProductSubFolder(foundProduct, pushHistory);
+                    return;
+                }
+            }
+
+            // Match category slug
+            const matchedCategory = products.find(p => toSlug(p.category) === rawHash);
+            if (matchedCategory) {
+                renderCategoryFolder(matchedCategory.category, pushHistory);
+            } else {
+                renderCategoryFolder('home', pushHistory);
+            }
+        }
+
+        // Navigate to Home Root or Specific Department Folder
+        function navigateToFolder(folderName) {
+            const target = (!folderName || folderName === 'All') ? 'home' : folderName;
+            renderCategoryFolder(target, true);
+        }
+
+        function renderCategoryFolder(folderName, pushHistory = true) {
+            currentFolder = folderName;
+            currentProductId = null;
+
+            const isHome = folderName === 'home';
+            const slug = isHome ? 'home' : toSlug(folderName);
+
+            if (pushHistory) {
+                try {
+                    history.pushState({ folder: folderName, productId: null }, '', '#' + slug);
+                } catch (e) {
+                    window.location.hash = slug;
+                }
+            }
+
+            // Toggle Views
+            document.getElementById('catalogViewWrapper').classList.remove('hidden');
+            document.getElementById('productFolderView').classList.add('hidden');
+            document.getElementById('heroSection').classList.toggle('hidden', !isHome);
+
+            // Update Select Dropdown & Mobile Pills
+            const catSelect = document.getElementById('categoryFilter');
+            if (catSelect) catSelect.value = isHome ? 'home' : folderName;
+            updateActiveMobilePill(folderName);
+
+            // Update Breadcrumb & Folder Path
+            document.getElementById('folderPathText').innerText = `/park-market/${slug}`;
+            document.getElementById('catalogFolderTitle').innerText = isHome ? 'All Products Catalog' : `${folderName} Folder`;
+
+            const breadcrumb = document.getElementById('breadcrumbTrail');
+            if (isHome) {
+                breadcrumb.innerHTML = `<span class="text-pakGreen-700 font-extrabold">Home (Root)</span>`;
+            } else {
+                breadcrumb.innerHTML = `
+                    <span class="cursor-pointer hover:underline text-gray-500" onclick="navigateToFolder('home')">Home</span>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-pakGreen-700 font-extrabold">${folderName}</span>
+                `;
+            }
+
+            // Filter and Render Products
+            const filtered = isHome ? products : products.filter(p => p.category === folderName);
+            renderProducts(filtered);
+
+            if (!isHome) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Open Dedicated Individual Product Sub-Folder (#category-slug/id-product-slug)
+        function openProductFolder(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            renderProductSubFolder(product, true);
+        }
+
+        function renderProductSubFolder(product, pushHistory = true) {
+            currentFolder = product.category;
+            currentProductId = product.id;
+            detailQty = 1;
+
+            const catSlug = toSlug(product.category);
+            const prodSlug = `${product.id}-${toSlug(product.title)}`;
+            const fullSlug = `${catSlug}/${prodSlug}`;
+
+            if (pushHistory) {
+                try {
+                    history.pushState({ folder: product.category, productId: product.id }, '', '#' + fullSlug);
+                } catch (e) {
+                    window.location.hash = fullSlug;
+                }
+            }
+
+            // Hide Catalog & Hero, Show Product Sub-Folder View
+            document.getElementById('heroSection').classList.add('hidden');
+            document.getElementById('catalogViewWrapper').classList.add('hidden');
+            document.getElementById('productFolderView').classList.remove('hidden');
+
+            // Update Breadcrumbs & Slug Badge
+            document.getElementById('folderPathText').innerText = `/park-market/${fullSlug}`;
+            document.getElementById('productFolderSlugBadge').innerText = `/park-market/${fullSlug}`;
+            updateActiveMobilePill(product.category);
+
+            const breadcrumb = document.getElementById('breadcrumbTrail');
+            breadcrumb.innerHTML = `
+                <span class="cursor-pointer hover:underline text-gray-500" onclick="navigateToFolder('home')">Home</span>
+                <span class="text-gray-400">/</span>
+                <span class="cursor-pointer hover:underline text-gray-600" onclick="navigateToFolder('${product.category}')">${product.category}</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-pakGreen-700 font-extrabold truncate max-w-[140px] sm:max-w-xs">${product.title}</span>
+            `;
+
+            const discountPercent = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
+            const isWishlisted = wishlist.some(item => item.id === product.id);
+
+            // Render Product Sub-Folder Content
+            const detailContainer = document.getElementById('productDetailContent');
+            detailContainer.innerHTML = `
+                <div class="relative bg-gray-100 rounded-2xl overflow-hidden h-64 sm:h-96 flex items-center justify-center">
+                    <img src="${product.image}" alt="${product.title}" onerror="this.src='https://placehold.co/600x500/006633/ffffff?text=Park+Market'" class="w-full h-full object-cover">
+                    <span class="absolute top-3 left-3 bg-pakGreen-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase shadow">${product.badge}</span>
+                    <span class="absolute bottom-3 left-3 bg-red-500 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">Save ${discountPercent}%</span>
+                </div>
+
+                <div class="flex flex-col justify-between space-y-4">
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-pakGreen-600 uppercase tracking-wider bg-pakGreen-50 px-2.5 py-1 rounded-lg">${product.brand} • ${product.category}</span>
+                            <button onclick="toggleWishlist(${product.id}); renderProductSubFolder(products.find(p => p.id === ${product.id}), false);" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-red-50 flex items-center justify-center text-gray-600 hover:text-red-500 transition">
+                                <i class="${isWishlisted ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-base"></i>
+                            </button>
+                        </div>
+
+                        <h1 class="text-xl sm:text-3xl font-black text-gray-900 leading-tight">${product.title}</h1>
+
+                        <div class="flex items-center gap-2 text-xs sm:text-sm">
+                            <div class="flex items-center text-amber-400">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star-half-stroke"></i>
+                                <span class="font-bold text-gray-800 ml-1.5">${product.rating}</span>
+                            </div>
+                            <span class="text-gray-400">(${product.reviews} Verified Reviews)</span>
+                            <span class="text-emerald-600 font-bold ml-auto"><i class="fa-solid fa-circle-check"></i> In Stock</span>
+                        </div>
+
+                        <div class="bg-gray-50 p-3.5 sm:p-4 rounded-2xl border border-gray-100 flex items-baseline gap-3">
+                            <span class="text-2xl sm:text-3xl font-black text-pakGreen-700">Rs. ${product.price.toLocaleString()}</span>
+                            <span class="text-sm sm:text-base text-gray-400 line-through">Rs. ${product.oldPrice.toLocaleString()}</span>
+                        </div>
+
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">${product.description}</p>
+                    </div>
+
+                    <div class="space-y-3 pt-2 border-t">
+                        <!-- Quantity Selector -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs sm:text-sm font-bold text-gray-700">Select Quantity:</span>
+                            <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl border">
+                                <button onclick="changeDetailQty(-1)" class="w-8 h-8 bg-white rounded-lg font-bold text-gray-700 shadow-sm active:scale-95">-</button>
+                                <span id="detailQtyValue" class="font-black text-sm w-6 text-center">1</span>
+                                <button onclick="changeDetailQty(1)" class="w-8 h-8 bg-white rounded-lg font-bold text-gray-700 shadow-sm active:scale-95">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons: Add to Cart + Direct Order on WhatsApp -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <button onclick="addProductWithQtyToCart(${product.id})" class="w-full bg-pakGreen-600 hover:bg-pakGreen-700 active:scale-95 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                                <i class="fa-solid fa-cart-plus text-base"></i> Add to Cart
+                            </button>
+                            <button onclick="orderProductOnWhatsApp(${product.id})" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                                <i class="fa-brands fa-whatsapp text-lg"></i> Order on WhatsApp
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 pt-2 text-center text-[10px] sm:text-xs text-gray-500">
+                            <div class="bg-gray-50 p-2 rounded-xl"><i class="fa-solid fa-money-bill-wave text-pakGreen-600 block mb-1"></i> Cash on Delivery</div>
+                            <div class="bg-gray-50 p-2 rounded-xl"><i class="fa-solid fa-rotate-left text-pakGreen-600 block mb-1"></i> 7-Day Return</div>
+                            <div class="bg-gray-50 p-2 rounded-xl"><i class="fa-solid fa-shield-halved text-pakGreen-600 block mb-1"></i> 100% Authentic</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Render Related Products inside same category folder
+            const related = products.filter(p => p.category === product.category && p.id !== product.id);
+            const relatedGrid = document.getElementById('relatedProductsGrid');
+            relatedGrid.innerHTML = '';
+            related.forEach(item => {
+                relatedGrid.appendChild(createProductCardElement(item));
+            });
+
+            document.getElementById('viewAllCategoryBtn').onclick = () => navigateToFolder(product.category);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeDetailQty(delta) {
+            detailQty = Math.max(1, detailQty + delta);
+            const qtyEl = document.getElementById('detailQtyValue');
+            if (qtyEl) qtyEl.innerText = detailQty;
+        }
+
+        function addProductWithQtyToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += detailQty;
+            } else {
+                cart.push({ ...product, qty: detailQty });
+            }
+            updateBadges();
+            renderCartItems();
+            showToast(`${detailQty}x ${product.title} added to cart!`);
+        }
+
+        // Handle Back Button (Steps back in browser history or cleanly steps up folder tree)
+        function handleBrowserBack() {
+            if (window.history.length > 1 && window.location.hash && window.location.hash !== '#home') {
+                window.history.back();
+            } else if (currentProductId !== null) {
+                navigateToFolder(currentFolder);
+            } else if (currentFolder !== 'home') {
+                navigateToFolder('home');
+            } else {
+                showToast("You are already in the Home Root folder.");
+            }
+        }
+
+        // Highlight Active Mobile Swipeable Pill
+        function updateActiveMobilePill(activeFolder) {
+            const pills = document.querySelectorAll('.mobile-pill');
+            pills.forEach(pill => {
+                const target = pill.getAttribute('data-folder');
+                if (target === activeFolder) {
+                    pill.classList.remove('bg-white/15', 'text-white');
+                    pill.classList.add('bg-amber-400', 'text-gray-900', 'font-bold');
+                } else {
+                    pill.classList.remove('bg-amber-400', 'text-gray-900', 'font-bold');
+                    pill.classList.add('bg-white/15', 'text-white');
+                }
+            });
+        }
+
+        // WhatsApp Integrations
+        function openWhatsAppDirect() {
+            const msg = encodeURIComponent("Assalam-o-Alaikum Park Market 🇵🇰! Mujhe shopping aur products ke baray mein maloomat chahiye.");
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+        }
+
+        function orderProductOnWhatsApp(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const total = product.price * detailQty;
+            const text = `Assalam-o-Alaikum Park Market 🇵🇰!\nMain yeh product order karna chahta hoon:\n\n• *Product:* ${product.title}\n• *Brand:* ${product.brand}\n• *Quantity:* ${detailQty}\n• *Total Price:* Rs. ${total.toLocaleString()}\n\nPlease confirm my Cash on Delivery order.`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function orderCartOnWhatsApp() {
+            if (cart.length === 0) {
+                showMessageBox('Cart Empty', 'Please add items to your cart first before sending an order on WhatsApp.');
+                return;
+            }
+            let subtotal = 0;
+            const lines = cart.map((item, index) => {
+                const lineTotal = item.price * item.qty;
+                subtotal += lineTotal;
+                return `${index + 1}. ${item.title} (${item.qty}x) = Rs. ${lineTotal.toLocaleString()}`;
+            });
+            const delivery = subtotal > 3000 ? 0 : 200;
+            const discountAmount = Math.round(subtotal * (appliedDiscount / 100));
+            const finalTotal = subtotal + delivery - discountAmount;
+
+            const text = `Assalam-o-Alaikum Park Market 🇵🇰!\nMera Cart Order:\n\n${lines.join('\n')}\n\n• *Delivery:* ${delivery === 0 ? 'FREE' : 'Rs. ' + delivery}\n${discountAmount > 0 ? `• *Discount (PARK15):* -Rs. ${discountAmount.toLocaleString()}\n` : ''}• *Grand Total:* Rs. ${finalTotal.toLocaleString()}\n\nPlease confirm my order.`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // Build Mobile-First 2-Column Product Card Element
+        function createProductCardElement(product) {
+            const isWishlisted = wishlist.some(item => item.id === product.id);
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col justify-between overflow-hidden group";
+            card.innerHTML = `
+                <div onclick="openProductFolder(${product.id})" class="cursor-pointer relative overflow-hidden bg-gray-100 h-36 sm:h-52">
+                    <img src="${product.image}" alt="${product.title}" onerror="this.src='https://placehold.co/400x300/006633/ffffff?text=Park+Market'" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-pakGreen-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase tracking-wider">${product.badge}</span>
+                    <button onclick="event.stopPropagation(); toggleWishlist(${product.id})" class="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 sm:w-9 sm:h-9 bg-white/95 rounded-full flex items-center justify-center shadow-md text-gray-600 hover:text-red-500 active:scale-90 transition">
+                        <i class="${isWishlisted ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-xs sm:text-sm"></i>
+                    </button>
+                </div>
+                <div class="p-3 sm:p-4 flex flex-col justify-between flex-1">
+                    <div onclick="openProductFolder(${product.id})" class="cursor-pointer">
+                        <span class="text-[10px] sm:text-[11px] font-semibold text-gray-400 uppercase tracking-wider block truncate">${product.brand}</span>
+                        <h3 class="font-bold text-gray-900 text-xs sm:text-sm mt-0.5 sm:mt-1 line-clamp-2 group-hover:text-pakGreen-600 transition leading-snug">${product.title}</h3>
+                        <div class="flex items-center gap-1 mt-1.5">
+                            <div class="text-amber-400 text-[10px] sm:text-xs">
+                                <i class="fa-solid fa-star"></i>
+                                <span class="font-bold text-gray-700 ml-0.5">${product.rating}</span>
+                            </div>
+                            <span class="text-[10px] sm:text-xs text-gray-400">(${product.reviews})</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2.5 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div onclick="openProductFolder(${product.id})" class="cursor-pointer">
+                            <span class="text-sm sm:text-lg font-black text-pakGreen-700 block leading-none">Rs. ${product.price.toLocaleString()}</span>
+                            <span class="text-[10px] sm:text-xs text-gray-400 line-through">Rs. ${product.oldPrice.toLocaleString()}</span>
+                        </div>
+                        <button onclick="addToCart(${product.id})" class="w-full sm:w-auto bg-pakGreen-600 hover:bg-pakGreen-700 active:scale-95 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cart-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Render Products Grid
+        function renderProducts(itemsToRender) {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            if (itemsToRender.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            itemsToRender.forEach(product => {
+                grid.appendChild(createProductCardElement(product));
+            });
+        }
+
+        // Toggle Mobile Folders Drawer Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('mobileMenuIcon');
+            if (!menu) return;
+            menu.classList.toggle('hidden');
+            if (icon) {
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-xmark');
+            }
+        }
+
+        // Search & Filter
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (currentProductId !== null) renderCategoryFolder(currentFolder, true);
+            const filtered = products.filter(p => {
+                const matchesQuery = p.title.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+                const matchesCategory = currentFolder === 'home' || p.category === currentFolder;
+                return matchesQuery && matchesCategory;
+            });
+            renderProducts(filtered);
+        }
+
+        function filterProductsMobile() {
+            const query = document.getElementById('searchInputMobile').value.toLowerCase();
+            if (currentProductId !== null) renderCategoryFolder(currentFolder, true);
+            const filtered = products.filter(p => {
+                const matchesQuery = p.title.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+                const matchesCategory = currentFolder === 'home' || p.category === currentFolder;
+                return matchesQuery && matchesCategory;
+            });
+            renderProducts(filtered);
+        }
+
+        function resetFilters() {
+            const desktopSearch = document.getElementById('searchInput');
+            const mobileSearch = document.getElementById('searchInputMobile');
+            if (desktopSearch) desktopSearch.value = '';
+            if (mobileSearch) mobileSearch.value = '';
+            navigateToFolder('home');
+        }
+
+        // Sorting
+        function sortProducts() {
+            const sortBy = document.getElementById('sortBy').value;
+            let baseList = currentFolder === 'home' ? [...products] : products.filter(p => p.category === currentFolder);
+            if (sortBy === 'low-high') baseList.sort((a, b) => a.price - b.price);
+            else if (sortBy === 'high-low') baseList.sort((a, b) => b.price - a.price);
+            else if (sortBy === 'rating') baseList.sort((a, b) => b.rating - a.rating);
+            renderProducts(baseList);
+        }
+
+        // Cart Management
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateBadges();
+            renderCartItems();
+            showToast(`${product.title} added to cart!`);
+        }
+
+        function updateCartQty(productId, delta) {
+            const item = cart.find(p => p.id === productId);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cart = cart.filter(p => p.id !== productId);
+                }
+            }
+            updateBadges();
+            renderCartItems();
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = '';
+            let subtotal = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-2 text-gray-300"></i>
+                        <p class="text-sm font-medium">Your cart is empty</p>
+                    </div>
+                `;
+            } else {
+                cart.forEach(item => {
+                    subtotal += item.price * item.qty;
+                    const div = document.createElement('div');
+                    div.className = "flex items-center gap-3 pt-3";
+                    div.innerHTML = `
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl bg-gray-100 shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-gray-900 truncate">${item.title}</h4>
+                            <span class="text-xs text-pakGreen-700 font-bold">Rs. ${item.price.toLocaleString()}</span>
+                            <div class="flex items-center gap-2 mt-1.5">
+                                <button onclick="updateCartQty(${item.id}, -1)" class="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-bold">-</button>
+                                <span class="text-xs font-bold w-5 text-center">${item.qty}</span>
+                                <button onclick="updateCartQty(${item.id}, 1)" class="w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-bold">+</button>
+                            </div>
+                        </div>
+                        <button onclick="updateCartQty(${item.id}, -${item.qty})" class="text-gray-400 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can"></i></button>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            const delivery = subtotal > 3000 || subtotal === 0 ? 0 : 200;
+            const discountAmount = Math.round(subtotal * (appliedDiscount / 100));
+            const total = subtotal + delivery - discountAmount;
+
+            document.getElementById('cartSubtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
+            document.getElementById('cartDelivery').innerText = delivery === 0 ? 'FREE' : `Rs. ${delivery}`;
+            document.getElementById('cartTotal').innerText = `Rs. ${total.toLocaleString()}`;
+
+            if (appliedDiscount > 0) {
+                document.getElementById('discountRow').classList.remove('hidden');
+                document.getElementById('cartDiscount').innerText = `-Rs. ${discountAmount.toLocaleString()}`;
+            } else {
+                document.getElementById('discountRow').classList.add('hidden');
+            }
+        }
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.toggle('hidden');
+            renderCartItems();
+        }
+
+        // Wishlist Management
+        function toggleWishlist(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            const index = wishlist.findIndex(item => item.id === productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showToast(`Removed from wishlist`);
+            } else {
+                wishlist.push(product);
+                showToast(`Added to wishlist!`);
+            }
+            updateBadges();
+            if (currentProductId === null) {
+                renderProducts(currentFolder === 'home' ? products : products.filter(p => p.category === currentFolder));
+            }
+            renderWishlistItems();
+        }
+
+        function renderWishlistItems() {
+            const container = document.getElementById('wishlistContainer');
+            container.innerHTML = '';
+            document.getElementById('wishlistCountHeader').innerText = wishlist.length;
+
+            if (wishlist.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 py-8 text-sm">Your wishlist is empty.</p>`;
+                return;
+            }
+
+            wishlist.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between pt-3 gap-2";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl bg-gray-100 shrink-0">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-xs text-gray-900 truncate">${item.title}</h4>
+                            <span class="text-xs text-pakGreen-700 font-bold">Rs. ${item.price.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="addToCart(${item.id}); toggleWishlistModal();" class="bg-pakGreen-600 text-white px-3 py-2 rounded-xl text-xs font-bold">Add</button>
+                        <button onclick="toggleWishlist(${item.id})" class="text-red-500 p-2"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleWishlistModal() {
+            const modal = document.getElementById('wishlistModal');
+            modal.classList.toggle('hidden');
+            renderWishlistItems();
+        }
+
+        function updateBadges() {
+            const totalCartQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').innerText = totalCartQty;
+            const mobileCartBadge = document.getElementById('mobileCartBadge');
+            if (mobileCartBadge) mobileCartBadge.innerText = totalCartQty;
+            document.getElementById('cartItemCount').innerText = totalCartQty;
+            document.getElementById('wishlistBadge').innerText = wishlist.length;
+        }
+
+        // Voucher Application
+        function applyVoucher(code) {
+            if (code === 'PARK15') {
+                appliedDiscount = 15;
+                renderCartItems();
+                showMessageBox('Voucher Applied! 🎉', '15% discount (PARK15) has been applied to your shopping cart.');
+            } else {
+                showMessageBox('Invalid Voucher', 'Please enter a valid promotional voucher code.');
+            }
+        }
+
+        // Cash on Delivery Checkout
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                showMessageBox('Cart Empty', 'Please add items to your cart before proceeding to checkout.');
+                return;
+            }
+            toggleCartDrawer();
+            const orderId = 'PM-' + Math.floor(10000 + Math.random() * 90000);
+            cart = [];
+            updateBadges();
+            showMessageBox('Order Confirmed! 🇵🇰', `Thank you for shopping with Park Market! Your order #${orderId} has been placed and will be delivered via Cash on Delivery within 2-4 business days.`);
+        }
+
+        // Auth Modal
+        function toggleAuthModal() {
+            document.getElementById('authModal').classList.toggle('hidden');
+        }
+
+        function switchAuthMode() {
+            isAuthRegistered = !isAuthRegistered;
+            const title = document.getElementById('authModalTitle');
+            const nameContainer = document.getElementById('nameFieldContainer');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const toggleText = document.getElementById('authToggleText');
+
+            if (isAuthRegistered) {
+                title.innerText = "Register for Park Market";
+                nameContainer.classList.remove('hidden');
+                submitBtn.innerText = "Create Account";
+                toggleText.innerHTML = `Already have an account? <span onclick="switchAuthMode()" class="text-pakGreen-600 font-bold cursor-pointer hover:underline">Sign In</span>`;
+            } else {
+                title.innerText = "Sign In to Park Market";
+                nameContainer.classList.add('hidden');
+                submitBtn.innerText = "Sign In";
+                toggleText.innerHTML = `Don't have an account? <span onclick="switchAuthMode()" class="text-pakGreen-600 font-bold cursor-pointer hover:underline">Register Now</span>`;
+            }
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const identifier = document.getElementById('authEmailPhone').value;
+            toggleAuthModal();
+            document.getElementById('authButtonText').innerText = identifier.split('@')[0];
+            showMessageBox('Welcome!', isAuthRegistered ? 'Your account was successfully registered.' : 'Successfully signed in to Park Market.');
+        }
+
+        // Order Tracker
+        function openOrderTracker() {
+            document.getElementById('orderTrackerModal').classList.toggle('hidden');
+        }
+
+        function trackOrder() {
+            const orderId = document.getElementById('orderIdInput').value.trim();
+            if (!orderId) {
+                showMessageBox('Enter Order ID', 'Please enter your Park Market Order ID (e.g., PM-94821).');
+                return;
+            }
+            document.getElementById('orderTrackingResult').classList.remove('hidden');
+            document.getElementById('resOrderId').innerText = orderId.toUpperCase();
+        }
+
+        // Live Chat Support Widget
+        function toggleChatPanel() {
+            document.getElementById('chatBoxPanel').classList.toggle('hidden');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const userMsg = document.createElement('div');
+            userMsg.className = "bg-pakGreen-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] self-end shadow-sm";
+            userMsg.innerText = text;
+            chatMessages.appendChild(userMsg);
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = "bg-pakGreen-50 text-gray-800 p-3 rounded-2xl rounded-tl-none max-w-[85%] self-start shadow-sm";
+                botMsg.innerText = "Shukriya! Our support team will respond shortly, or tap the green WhatsApp icon in the bottom bar for instant chat.";
+                chatMessages.appendChild(botMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 900);
+        }
+
+        // Message Box & Toast Helpers
+        function showMessageBox(title, body) {
+            document.getElementById('msgBoxTitle').innerText = title;
+            document.getElementById('msgBoxBody').innerText = body;
+            document.getElementById('messageBoxModal').classList.remove('hidden');
+        }
+
+        function closeMessageBox() {
+            document.getElementById('messageBoxModal').classList.add('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-20 md:bottom-5 left-3 right-3 sm:right-auto sm:left-5 z-50 bg-gray-900 text-white px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl text-center sm:text-left";
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2400);
+        }
+    </script>
+</body>
+</html>
